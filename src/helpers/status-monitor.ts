@@ -12,10 +12,10 @@ export const checkUptime = async (handler: AxiosInstance, deviceId: string) => {
     const response: ServerResponse = await handler.get(url);
     return response;
   } catch (e: any) {
-    if (e.response.data === "Internal Server Error") {
+    if (e?.response?.data === "Internal Server Error") {
       logger.serverError(e.response.data);
+    } else {
+      console.log(e);
     }
-
-    console.log(e);
   }
 };
