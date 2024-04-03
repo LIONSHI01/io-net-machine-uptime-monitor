@@ -3,7 +3,11 @@ import { DeviceConditions } from "../utils/types";
 class Logger {
   constructor() {}
 
-  common(details: DeviceConditions) {
+  log(msg: string) {
+    console.log(msg);
+  }
+
+  serverDetails(details: DeviceConditions) {
     const { status, device_id } = details || {};
     console.log(`Machine ${device_id} is ${status}`);
   }
