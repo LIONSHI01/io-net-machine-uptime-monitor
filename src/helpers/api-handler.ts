@@ -1,8 +1,11 @@
 import axios from "axios";
 
-export const apiHandler = (token: string) =>
+// https://id.io.net/auth/v1/token?grant_type=refresh_token
+
+export const apiHandler = (apiKey: string) =>
   axios.create({
     headers: {
-      Token: token,
+      Apikey: apiKey,
+      Authorization: `Bearer ${apiKey}`,
     },
   });

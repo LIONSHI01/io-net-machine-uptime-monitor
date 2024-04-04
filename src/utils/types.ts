@@ -36,3 +36,12 @@ export type DowntimeInfo = {
   downtime: number;
   note: string;
 };
+
+export type RefreshTokenResponse = AxiosResponse<{
+  access_token: string;
+  refresh_token: string;
+  user: any;
+  token_type: string;
+  expires_in: number;
+  expires_at: number;
+}>;
