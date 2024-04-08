@@ -1,3 +1,4 @@
+import fs from "fs";
 import dotenv from "dotenv";
 
 import { runCommand } from "./helpers/command-processor";
@@ -6,6 +7,7 @@ import { apiHandler } from "./helpers/api-handler";
 import logger from "./helpers/logger";
 import { getRefreshToken } from "./api/auth";
 import { checkAllMachines } from "./helpers/check-all-machines";
+import { resolve } from "path";
 
 dotenv.config({
   path: ".env",
@@ -14,40 +16,38 @@ dotenv.config({
 const command = process.env.COMMAND;
 const deviceId = process.env.DEVICE_ID;
 const runInterval = process.env.RUN_INTERVAL_IN_MIN;
-const credentialToken = process.env.TOKEN;
 const apiKeyToken = process.env.API_TOKEN;
-const refreshToken = process.env.REFRESH_TOKEN;
 
 const handler = apiHandler(apiKeyToken);
 
-const main = async () => {
-  // get refresh token
+// const main = async () => {
+//   const authTokenStorePath = resolve("./src/auth-data/auth_tokens.json");
+//   const authTokenData = fs.readFileSync(authTokenStorePath, "utf-8");
+//   const authTokens = JSON.parse(authTokenData);
 
-  // get access token
+//   // get access token
+//   const loginResponse = await getRefreshToken(handler, authTokens.refreshToken);
+//   const accessToken = loginResponse.data.access_token;
+//   const serverUptimeResponse = await checkUptime(
+//     handler,
+//     accessToken,
+//     deviceId
+//   );
 
-  // check if single machine up
+//   if (serverUptimeResponse?.data?.status === "succeeded") {
+//     const machineDetails = serverUptimeResponse.data.data;
+//     const { status } = machineDetails || {};
 
-  // if down, run restart command
+//     logger.serverDetails(machineDetails);
 
-  // const response = await getRefreshToken(handler, refreshToken);
-  // if (response.data) {
-  //   const authToken = response.data.access_token;
-  //   const res = await checkUptime(handler, authToken, deviceId);
-  //   if (res?.data?.status === "succeeded") {
-  //     const machineDetails = res.data.data;
-  //     const { status } = machineDetails || {};
+//     if (status === "down") {
+//       runCommand(command);
+//     }
+//   }
+// };
+checkAllMachines(handler);
+// First run
+// main();
 
-  //     logger.common(machineDetails);
-
-  //     if (status === "down") {
-  //       runCommand(command);
-  //     }
-  //   }
-  // }
-
-  await checkAllMachines(handler);
-};
-
-main();
-
+// Repeat running
 // setInterval(main, Number(runInterval) * 60 * 1000);
