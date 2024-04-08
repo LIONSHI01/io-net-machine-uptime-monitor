@@ -22,6 +22,8 @@ export const getRefreshToken = async (
         refreshToken: response.data.refresh_token,
         accessToken: response.data.access_token,
       };
+
+      // Save access token and refresh token
       const dataToSave = JSON.stringify(authTokens, null, 2);
       fs.writeFileSync(authTokenStorePath, dataToSave);
     }
