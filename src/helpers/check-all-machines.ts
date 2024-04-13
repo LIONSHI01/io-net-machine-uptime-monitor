@@ -1,10 +1,12 @@
 import fs from "fs";
 import { resolve } from "path";
 import { AxiosInstance } from "axios";
-import { apiHandler } from "./api-handler";
 import { readCsv } from "./read-file";
 import { checkUptime } from "../api/status-monitor";
 import { getRefreshToken } from "../api/auth";
+import { bot } from "../telegram";
+import { TELEGRAM_CHAT_ROOM_ID } from "../constants";
+import { logger } from "../utils";
 
 type MachineRecord = {
   server: string;
@@ -12,6 +14,8 @@ type MachineRecord = {
 };
 
 export const checkAllMachines = async (apiHandler: AxiosInstance) => {
+  logger.info("Checking all machines...");
+
   const authTokenStorePath = resolve("./src/auth-data/auth_tokens.json");
   const machineFilePath = resolve("./src/machines.csv");
 
@@ -28,9 +32,17 @@ export const checkAllMachines = async (apiHandler: AxiosInstance) => {
       const uptimeRes = await checkUptime(apiHandler, authToken, item.deviceId);
       const deviceDetails = uptimeRes?.data.data;
 
-      console.log(
-        `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
-      );
+      if (deviceDetails.status === "down") {
+        const tgMsg = `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`;
+        bot.telegram.sendMessage(TELEGRAM_CHAT_ROOM_ID, tgMsg);
+        logger.warn(
+          `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
+        );
+      } else {
+        logger.info(
+          `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
+        );
+      }
     }
   } catch (e) {
     console.log(e);
