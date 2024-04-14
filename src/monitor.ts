@@ -12,7 +12,7 @@ function runTgBot() {
 
   bot.command("check", (ctx) => {
     ctx.reply("Checking machines...");
-    checkAllMachines(handler);
+    checkAllMachines(handler, true);
   });
 }
 

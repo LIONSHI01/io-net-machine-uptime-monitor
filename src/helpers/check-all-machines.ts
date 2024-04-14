@@ -13,7 +13,10 @@ type MachineRecord = {
   deviceId: string;
 };
 
-export const checkAllMachines = async (apiHandler: AxiosInstance) => {
+export const checkAllMachines = async (
+  apiHandler: AxiosInstance,
+  showMsg: boolean = false
+) => {
   logger.info("Checking all machines...");
 
   const authTokenStorePath = resolve("./src/auth-data/auth_tokens.json");
@@ -33,8 +36,6 @@ export const checkAllMachines = async (apiHandler: AxiosInstance) => {
       const deviceDetails = uptimeRes?.data.data;
 
       if (deviceDetails.status === "down") {
-        const tgMsg = `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`;
-        bot.telegram.sendMessage(TELEGRAM_CHAT_ROOM_ID, tgMsg);
         logger.warn(
           `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
         );
@@ -42,6 +43,11 @@ export const checkAllMachines = async (apiHandler: AxiosInstance) => {
         logger.info(
           `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
         );
+      }
+
+      if (showMsg) {
+        const tgMsg = `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`;
+        bot.telegram.sendMessage(TELEGRAM_CHAT_ROOM_ID, tgMsg);
       }
     }
   } catch (e) {
