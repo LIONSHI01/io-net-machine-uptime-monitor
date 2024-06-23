@@ -37,19 +37,20 @@ export const checkAllMachines = async (
 
       const deviceDetails = uptimeRes?.data.data;
 
+      const tgMsg = `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`;
       if (deviceDetails.status === "down") {
         logger.warn(
           `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
         );
+
+        // Notification on TG
+        if (showMsg) {
+          bot.telegram.sendMessage(TELEGRAM_CHAT_ROOM_ID, tgMsg);
+        }
       } else {
         logger.info(
           `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`
         );
-      }
-
-      if (showMsg) {
-        const tgMsg = `Machine ${item.server} -  ${deviceDetails?.device_id} : ${deviceDetails?.status}`;
-        bot.telegram.sendMessage(TELEGRAM_CHAT_ROOM_ID, tgMsg);
       }
     }
   } catch (e) {
