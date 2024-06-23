@@ -22,9 +22,9 @@ async function init() {
 
 async function runListener() {
   await init();
-  checkAllMachines(handler);
+  checkAllMachines(handler, true);
 
-  setInterval(() => checkAllMachines(handler), 1200000);
+  setInterval(() => checkAllMachines(handler, true), 1200000);
 }
 
 runListener();

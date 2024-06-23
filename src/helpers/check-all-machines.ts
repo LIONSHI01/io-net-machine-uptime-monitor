@@ -27,12 +27,14 @@ export const checkAllMachines = async (
 
   const machineList: MachineRecord[] = await readCsv(machineFilePath);
 
+  const token = process.env.AUTH_TOKEN;
   try {
-    const response = await getRefreshToken(apiHandler, authTokens.refreshToken);
-    const authToken = response.data.access_token;
+    // const response = await getRefreshToken(apiHandler, authTokens.refreshToken);
+    // const authToken = response.data.access_token;
 
     for (const item of machineList) {
-      const uptimeRes = await checkUptime(apiHandler, authToken, item.deviceId);
+      const uptimeRes = await checkUptime(apiHandler, token, item.deviceId);
+
       const deviceDetails = uptimeRes?.data.data;
 
       if (deviceDetails.status === "down") {
